@@ -1,220 +1,482 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Putera Trans</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #3B82F6;
-            --secondary-color: #10B981;
-            --background-light: #F3F4F6;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        .gradient-bg {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        }
-
-        .section-title {
-            position: relative;
-            padding-bottom: 12px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 80px;
-            height: 4px;
-            background: var(--primary-color);
-        }
-
-        .service-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Saham & Crypto</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#00e6ff',secondary:'#00ff9d'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Inter', sans-serif;
+background-color: #121212;
+color: #e0e0e0;
+}
+.neon-text {
+text-shadow: 0 0 5px rgba(0, 230, 255, 0.5), 0 0 10px rgba(0, 230, 255, 0.3);
+}
+.neon-border {
+box-shadow: 0 0 5px rgba(0, 230, 255, 0.5), 0 0 10px rgba(0, 230, 255, 0.3);
+}
+.gradient-bg {
+background: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
+}
+.card {
+background-color: #1e1e1e;
+border: 1px solid #333;
+transition: all 0.3s ease;
+}
+.card:hover {
+transform: translateY(-2px);
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+filter: invert(1);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.page-transition {
+animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.tab-active {
+color: var(--tw-color-primary-DEFAULT);
+border-bottom: 2px solid var(--tw-color-primary-DEFAULT);
+}
+.custom-scrollbar::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+background: #1e1e1e;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+background: #333;
+border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+background: #444;
+}
+.toggle-switch {
+position: relative;
+display: inline-block;
+width: 40px;
+height: 20px;
+}
+.toggle-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.toggle-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #333;
+transition: .4s;
+border-radius: 20px;
+}
+.toggle-slider:before {
+position: absolute;
+content: "";
+height: 16px;
+width: 16px;
+left: 2px;
+bottom: 2px;
+background-color: #fff;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .toggle-slider {
+background-color: var(--tw-color-primary-DEFAULT);
+}
+input:checked + .toggle-slider:before {
+transform: translateX(20px);
+}
+</style>
 </head>
-<body class="bg-white text-gray-800">
-    <header class="fixed w-full z-50 bg-white shadow-md">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold text-primary-color">
-                <span class="text-blue-600">Putera Nusantara</span> Trans
-            </div>
-           
+<body class="min-h-screen">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-[#121212] border-b border-gray-800">
+<div class="container mx-auto px-4 py-3">
+<div class="flex justify-between items-center">
+<a href="#" class="text-2xl font-['Pacifico'] text-primary">ChartHunterID</a>
+<div class="hidden md:flex space-x-6 items-center">
+<a href="#" class="text-white hover:text-primary transition-colors py-2 border-b-2 border-primary">Beranda</a>
+<a href="#" id="saham-menu" class="text-gray-400 hover:text-primary transition-colors py-2 border-b-2 border-transparent">Saham</a>
+<a href="TESTING 2\Halaman-Analisis-Cryptocurrency.html" class="text-gray-400 hover:text-primary transition-colors py-2 border-b-2 border-transparent">Crypto</a>
+<a href="#" class="text-gray-400 hover:text-primary transition-colors py-2 border-b-2 border-transparent">Tentang Saya</a>
+<a href="#" class="text-gray-400 hover:text-primary transition-colors py-2 border-b-2 border-transparent">Kontak</a>
+</div>
+<div class="md:hidden w-8 h-8 flex items-center justify-center">
+<i class="ri-menu-line ri-lg text-white"></i>
+</div>
+</div>
+</div>
+</nav>
+<div class="container mx-auto px-4 pt-20 pb-10">
+<div class="page-transition">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">Analisis Saham</h1>
+    <p class="text-gray-400">Analisis dan prediksi saham dengan dukungan AI</p>
+  </div>
+
+  <div id="saham-section" style="display: none;">
+    <!-- Form input -->
+    <form id="stockForm" class="card p-5 rounded mb-8">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="relative">
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <i class="ri-search-line text-gray-500"></i>
+      </div>
+      <input type="text" id="kodeSaham" class="w-full bg-[#252525] text-white border-none rounded pl-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Kode Saham (BBCA, TLKM, ...)">
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="relative">
+        <input type="date" id="tanggalAwal" class="w-full bg-[#252525] text-white border-none rounded pl-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary">
+      </div>
+      <div class="relative">
+        <input type="date" id="tanggalAkhir" class="w-full bg-[#252525] text-white border-none rounded pl-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary">
+      </div>
+    </div>
+    <button type="submit" class="!rounded-button bg-primary hover:bg-opacity-80 text-black font-medium py-2.5 px-4 transition-colors whitespace-nowrap">
+      <div class="flex items-center justify-center gap-2">
+        <i class="ri-line-chart-line"></i>
+        <span>Analisis Saham</span>
+      </div>
+    </button>
+  </div>
+</form>
+
+
+    <!-- Grafik saham -->
+    <div class="card p-5 rounded mb-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Grafik Harga Saham</h2>
+        <div class="flex space-x-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-400">MA</span>
+            <label class="toggle-switch">
+              <input type="checkbox">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-400">RSI</span>
+            <label class="toggle-switch">
+              <input type="checkbox">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-400">MACD</span>
+            <label class="toggle-switch">
+              <input type="checkbox">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
         </div>
-    </header>
-
-    <main>
-        <section id="home" class="min-h-screen gradient-bg flex items-center justify-center text-white">
-            <div class="container mx-auto px-4 text-center">
-                <h1 class="text-5xl font-bold mb-4">Perusahaan Otomotif Virtual</h1>
-                <p class="text-xl mb-8">Bergabunglah dengan komunitas kami untuk mendapatkan pengalaman dalam dunia game simulasi</p>
-                <a href="https://forms.gle/NaFnF7bw6vicXP8c9" class="bg-blue-600 text-primary-color px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition">Daftar Sekarang</a>
-            </div>
-        </section>
-
-        <section id="about" class="py-20 bg-background-light">
-            <div class="container mx-auto px-4">
-                <h2 class="text-4xl font-bold mb-12 section-title">Tentang Kami</h2>
-                <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div>
-                        <p class="text-lg mb-6">Komunitas premium yang menyatukan para penggemar simulasi transportasi dari Bus Simulator Indonesia (BUSSID).</p>
-                        <p class="text-lg mb-6">Sebagai grup pemain Bus Simulator Indonesia, kami tidak hanya bermain, tetapi juga membangun komunitas yang solid, saling mendukung, dan terus berkembang.</p>
-                        <h3 class="text-2xl font-semibold mb-4">Visi Kami</h3>
-                        <p class="text-lg mb-4">Menjadi pelopor dalam menghubungkan dunia otomotif virtual dengan industri nyata, kami bercita-cita untuk menciptakan pengalaman simulasi yang mendekati kenyataan, mendidik, dan menghibur. Visi kami adalah membangun ekosistem otomotif virtual yang inklusif, di mana setiap anggota dapat berkontribusi, berkolaborasi, dan menginspirasi satu sama lain.</p>
-                    </div>
-                    <div class="bg-white p-8 rounded-lg shadow-lg">
-                        <h3 class="text-2xl font-semibold mb-4">Misi Kami</h3>
-                        <ul class="space-y-3">
-                            <li class="flex items-center">
-                                <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Menciptakan lingkungan bermain profesional
-                            </li>
-                            <li class="flex items-center">
-                                <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Mengembangkan standar operasional virtual
-                            </li>
-                            <li class="flex items-center">
-                                <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Membangun komunitas solid
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="divisi" class="py-20">
-            <div class="container mx-auto px-4">
-                <h2 class="text-4xl font-bold mb-12 section-title">Divisi Kami</h2>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="service-card bg-white p-8 rounded-lg shadow-md text-center">
-                        <svg class="w-16 h-16 mx-auto mb-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                        <h3 class="text-2xl font-semibold mb-4">Divisi Pariwisata</h3>
-                        <p>Simulator perjalanan wisata dengan rute menakjubkan di seluruh Indonesia.</p>
-                    </div>
-                    <div class="service-card bg-white p-8 rounded-lg shadow-md text-center">
-                        <svg class="w-16 h-16 mx-auto mb-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <h3 class="text-2xl font-semibold mb-4">Divisi AKAP</h3>
-                        <p>Pengalaman mengemudi bus antar kota antar provinsi yang refrensi</p>
-                    </div>
-                    <div class="service-card bg-white p-8 rounded-lg shadow-md text-center">
-                        <svg class="w-16 h-16 mx-auto mb-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        <h3 class="text-2xl font-semibold mb-4">Divisi Logistik</h3>
-                        <p>Simulasi pengiriman barang dengan manajemen rute dan kargo yang profesional.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-       
-    </main>
-
-<footer class="bg-gray-900 text-gray-300">
-    <!-- Main Footer -->
-    <div class="max-w-7xl mx-auto px-4 py-16">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Company Info -->
-            <div class="space-y-4">
-                <h3 class="text-xl font-bold text-white mb-4">Putera Nusantara Trans</h3>
-                <p class="text-sm">Perusahaan otomotif virtual yang berdedikasi untuk memberikan pengalaman berkendara terbaik dalam dunia game simulasi.</p>
-                <div class="flex space-x-4 pt-2">
-                    <!-- Ikon Facebook -->
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                        </svg>
-                    </a>
-            
-                    <!-- Ikon Instagram -->
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            
-            
-
-            <!-- Quick Links -->
-            <div>
-                <h3 class="text-xl font-bold text-white mb-4">Quick Links</h3>
-                <ul class="space-y-2">
-                    <li><a href="#home" class="hover:text-white transition">Beranda</a></li>
-                    <li><a href="#about" class="hover:text-white transition">Tentang Kami</a></li>
-                    <li><a href="#divisi" class="hover:text-white transition">Divisi</a></li>
-                    
-                </ul>
-            </div>
-
-            <!-- Divisions -->
-            <div>
-                <h3 class="text-xl font-bold text-white mb-4">Divisi</h3>
-                <ul class="space-y-2">
-                    <li><a href="#" class="hover:text-white transition">Divisi Pariwisata</a></li>
-                    <li><a href="#" class="hover:text-white transition">Divisi AKAP</a></li>
-                    <li><a href="#" class="hover:text-white transition">Divisi Logistik</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact -->
-            <div>
-                <h3 class="text-xl font-bold text-white mb-4">Kontak</h3>
-                <ul class="space-y-2">
-                    <li class="flex items-start space-x-3">
-                        <svg class="w-6 h-6 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        <span>Jl Tajur No 2, Kec Bogor Barat, Kab Bogor</span>
-                    </li>
-                    <li class="flex items-center space-x-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                        </svg>
-                        <span>+62 858-1341-9657</span>
-                    </li>
-                    <li class="flex items-center space-x-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                        <span>puteranusantaraservice@gmail.com</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
+      </div>
+      <!-- Tempat chart -->
+    <div id="stockChart" class="w-full h-[400px]"></div>
     </div>
 
-    <!-- Bottom Footer -->
-    <div class="border-t border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 py-6">
-            <div class="md:flex md:items-center md:justify-between">
-                <div class="text-sm">
-                    &copy; 2024 Putera Nusantara Trans. All rights reserved.
-                </div>
-                <div class="mt-4 md:mt-0">
-                    <ul class="flex space-x-6 text-sm">
-                        <li><a href="#" class="hover:text-white transition">Kebijakan Privasi</a></li>
-                        <li><a href="#" class="hover:text-white transition">Syarat & Ketentuan</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
+    
 
-    </body>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  <div class="card p-5 rounded">
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <div class="w-6 h-6 flex items-center justify-center mr-2 text-primary">
+        <i class="ri-ai-generate ri-lg"></i>
+      </div>
+      Prediksi AI
+    </h2>
+    <div class="bg-[#252525] rounded p-6 flex flex-col items-center justify-center h-[200px]">
+      <div class="w-12 h-12 flex items-center justify-center mb-4">
+        <i class="ri-robot-line ri-2x text-primary"></i>
+      </div>
+      <p class="text-center text-gray-400">Masukkan kode saham dan rentang tanggal untuk melihat prediksi AI</p>
+    </div>
+  </div>
+
+  <div class="card p-5 rounded">
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <div class="w-6 h-6 flex items-center justify-center mr-2 text-primary">
+        <i class="ri-line-chart-line ri-lg"></i>
+      </div>
+      Analisis Teknikal
+    </h2>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-[#252525] rounded p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-400">MA (20)</span>
+          <span class="text-lg font-medium">-</span>
+        </div>
+        <div class="w-full h-1 bg-[#333] rounded-full">
+          <div class="h-1 bg-primary rounded-full w-0"></div>
+        </div>
+      </div>
+
+      <div class="bg-[#252525] rounded p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-400">MA (50)</span>
+          <span class="text-lg font-medium">-</span>
+        </div>
+        <div class="w-full h-1 bg-[#333] rounded-full">
+          <div class="h-1 bg-primary rounded-full w-0"></div>
+        </div>
+      </div>
+
+      <div class="bg-[#252525] rounded p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-400">RSI</span>
+          <span class="text-lg font-medium">-</span>
+        </div>
+        <div class="w-full h-1 bg-[#333] rounded-full">
+          <div class="h-1 bg-primary rounded-full w-0"></div>
+        </div>
+      </div>
+
+      <div class="bg-[#252525] rounded p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-400">MACD</span>
+          <span class="text-lg font-medium">-</span>
+        </div>
+        <div class="w-full h-1 bg-[#333] rounded-full">
+          <div class="h-1 bg-primary rounded-full w-0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  <div class="card p-5 rounded">
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <div class="w-6 h-6 flex items-center justify-center mr-2 text-primary">
+        <i class="ri-ai-generate ri-lg"></i>
+      </div>
+      Prediksi AI
+    </h2>
+    <div class="bg-[#252525] rounded p-6 flex flex-col items-center justify-center h-[200px]">
+      <div class="w-12 h-12 flex items-center justify-center mb-4">
+        <i class="ri-robot-line ri-2x text-primary"></i>
+      </div>
+      <p class="text-center text-gray-400">Masukkan kode saham dan rentang tanggal untuk melihat prediksi AI</p>
+    </div>
+  </div>
+
+  <div class="card p-5 rounded">
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <div class="w-6 h-6 flex items-center justify-center mr-2 text-primary">
+        <i class="ri-line-chart-line ri-lg"></i>
+      </div>
+      Analisis Teknikal
+    </h2>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-[#252525] rounded p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-400">MA (20)</span>
+          <span class="text-lg font-medium">-</span>
+        </div>
+        <div class="w-full h-1 bg-[#333] rounded-full">
+          <div class="h-1 bg-primary rounded-full w-0"></div>
+        </div>
+      </div>
+
+      <div class="bg-[#252525] rounded p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-400">MA (50)</span>
+          <span class="text-lg font-medium">-</span>
+        </div>
+        <div class="w-full h-1 bg-[#333] rounded-full">
+          <div class="h-1 bg-primary rounded-full w-0"></div>
+        </div>
+      </div>
+
+      <div class="bg-[#252525] rounded p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-400">RSI</span>
+          <span class="text-lg font-medium">-</span>
+        </div>
+        <div class="w-full h-1 bg-[#333] rounded-full">
+          <div class="h-1 bg-primary rounded-full w-0"></div>
+        </div>
+      </div>
+
+      <div class="bg-[#252525] rounded p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-400">MACD</span>
+          <span class="text-lg font-medium">-</span>
+        </div>
+        <div class="w-full h-1 bg-[#333] rounded-full">
+          <div class="h-1 bg-primary rounded-full w-0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Handle window resize
+window.addEventListener('resize', function () {
+  const chart = echarts.getInstanceByDom(document.getElementById('stockChart'));
+  if (chart) chart.resize();
+});
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const sahamMenu = document.getElementById('saham-menu');
+  const sahamSection = document.getElementById('saham-section');
+
+  // Awalnya sembunyikan
+  sahamSection.style.display = 'none';
+
+  sahamMenu.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    // Tampilkan
+    sahamSection.style.display = 'block';
+
+    // Hitung posisi scroll agar tidak ketutup navbar
+    const navbar = document.querySelector('nav');
+    const navbarHeight = navbar ? navbar.offsetHeight : 80;
+
+    const y = sahamSection.getBoundingClientRect().top + window.scrollY - navbarHeight;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const sahamMenu = document.getElementById('saham-menu');
+  const sahamSection = document.getElementById('saham-section');
+
+  // Sembunyikan awal
+  sahamSection.style.display = 'none';
+
+  // Saat tombol "Saham" diklik
+  sahamMenu.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    // Tampilkan form
+    sahamSection.style.display = 'block';
+
+    // Scroll ke bawah
+    const navbar = document.querySelector('nav');
+    const navbarHeight = navbar ? navbar.offsetHeight : 80;
+    const y = sahamSection.getBoundingClientRect().top + window.scrollY - navbarHeight;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  });
+
+  // Saat form dikirim
+  document.getElementById('stockForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const kode = document.getElementById('kodeSaham').value;
+    const tglAwal = document.getElementById('tanggalAwal').value;
+    const tglAkhir = document.getElementById('tanggalAkhir').value;
+
+    fetch('/api/saham', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kode, tanggal_awal: tglAwal, tanggal_akhir: tglAkhir })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        alert("Error: " + data.error);
+        return;
+      }
+
+      const chart = echarts.init(document.getElementById('stockChart'));
+      chart.setOption({
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'category', data: data.tanggal },
+        yAxis: { type: 'value' },
+        series: [{
+          name: kode,
+          type: 'line',
+          data: data.harga,
+          smooth: true,
+          lineStyle: { color: '#00e6ff', width: 3 },
+          areaStyle: { color: 'rgba(0,230,255,0.2)' }
+        }]
+      });
+    });
+  });
+});
+fetch('/api/saham', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ kode, tanggal_awal: tglAwal, tanggal_akhir: tglAkhir })
+})
+.then(res => res.json())
+.then(data => {
+  if (data.error) {
+    alert("Error: " + data.error);
+    return;
+  }
+
+  const chart = echarts.init(document.getElementById('stockChart'));
+  chart.setOption({
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: data.tanggal },
+    yAxis: { type: 'value' },
+    series: [{
+      name: kode,
+      type: 'line',
+      data: data.harga,
+      smooth: true,
+      lineStyle: { color: '#00e6ff', width: 3 },
+      areaStyle: { color: 'rgba(0,230,255,0.2)' }
+    }]
+  });
+})
+.catch(error => {
+  console.error("Fetch error:", error);
+  alert("Terjadi kesalahan saat mengambil data saham.");
+});
+chart.setOption({
+  backgroundColor: '#121212',       // latar belakang chart
+  textStyle: { color: '#e0e0e0' },   // warna teks umum
+  xAxis: {
+    type: 'category',
+    axisLine: { lineStyle: { color: '#e0e0e0' } },   // warna garis sumbu X
+    axisLabel: { color: '#e0e0e0' }                  // warna label sumbu X
+  },
+  yAxis: {
+    type: 'value',
+    axisLine: { lineStyle: { color: '#e0e0e0' } },   // warna garis sumbu Y
+    axisLabel: { color: '#e0e0e0' }                  // warna label sumbu Y
+  },
+  series: [{
+    name: kode,
+    type: 'line',
+    data: data.harga,
+    smooth: true,
+    lineStyle: { color: '#00e6ff', width: 3 },       // warna garis chart
+    areaStyle: { color: 'rgba(0,230,255,0.2)' }      // area fill di bawah garis
+  }]
+});
+
+</script>
+</body>
 </html>
